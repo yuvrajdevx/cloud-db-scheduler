@@ -1,0 +1,62 @@
+[
+  {
+    "ParameterKey": "Namespace",
+    "ParameterValue": "default"
+  },
+  {
+    "ParameterKey": "TagName",
+    "ParameterValue": "Schedule"
+  },
+  {
+    "ParameterKey": "DefaultTimezone",
+    "ParameterValue": "<your-timezone e.g. America/New_York>"
+  },
+  {
+    "ParameterKey": "Principals",
+    "ParameterValue": "<your-workload-account-id>"
+  },
+  {
+    "ParameterKey": "UsingAWSOrganizations",
+    "ParameterValue": "No"
+  },
+  {
+    "ParameterKey": "SchedulingActive",
+    "ParameterValue": "Yes"
+  },
+  {
+    "ParameterKey": "SchedulerFrequency",
+    "ParameterValue": "5"
+  },
+  {
+    "ParameterKey": "ScheduleRdsClusters",
+    "ParameterValue": "Yes"
+  },
+  {
+    "ParameterKey": "CreateRdsSnapshot",
+    "ParameterValue": "No"
+  },
+  {
+    "ParameterKey": "EnableSSMMaintenanceWindows",
+    "ParameterValue": "No"
+  },
+  {
+    "ParameterKey": "EnableInformationalTagging",
+    "ParameterValue": "Yes"
+  },
+  {
+    "ParameterKey": "LogRetentionDays",
+    "ParameterValue": "30"
+  },
+  {
+    "ParameterKey": "MemorySize",
+    "ParameterValue": "512"
+  },
+  {
+    "ParameterKey": "OrchestratorMemorySize",
+    "ParameterValue": "512"
+  },
+  {
+    "ParameterKey": "Trace",
+    "ParameterValue": "No"
+  }
+]
