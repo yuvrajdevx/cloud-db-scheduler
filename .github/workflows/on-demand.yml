@@ -1,0 +1,71 @@
+name: On-demand DB start/stop
+
+# Requires two repository variables (Settings → Secrets and variables → Actions → Variables):
+#   AWS_WORKLOAD_ACCOUNT_ID - the AWS account ID that owns the databases
+#   AWS_REGION              - the region the databases live in
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - start
+          - stop
+      resource_type:
+        description: 'Resource type'
+        required: true
+        type: choice
+        options:
+          - rds-instance
+          - aurora-cluster
+          - docdb-cluster
+      resource_id:
+        description: 'DB instance or cluster identifier (e.g. my-db or my-aurora-cluster)'
+        required: true
+        type: string
+
+jobs:
+  db-action:
+    name: ${{ inputs.action }} ${{ inputs.resource_id }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_WORKLOAD_ACCOUNT_ID }}:role/github-actions-db-scheduler
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Start or stop RDS instance
+        if: inputs.resource_type == 'rds-instance'
+        run: |
+          if [ "${{ inputs.action }}" == "start" ]; then
+            echo "Starting RDS instance: ${{ inputs.resource_id }}"
+            aws rds start-db-instance --db-instance-identifier "${{ inputs.resource_id }}"
+          else
+            echo "Stopping RDS instance: ${{ inputs.resource_id }}"
+            aws rds stop-db-instance --db-instance-identifier "${{ inputs.resource_id }}"
+          fi
+
+      - name: Start or stop Aurora / DocDB cluster
+        if: inputs.resource_type == 'aurora-cluster' || inputs.resource_type == 'docdb-cluster'
+        run: |
+          if [ "${{ inputs.action }}" == "start" ]; then
+            echo "Starting cluster: ${{ inputs.resource_id }}"
+            aws rds start-db-cluster --db-cluster-identifier "${{ inputs.resource_id }}"
+          else
+            echo "Stopping cluster: ${{ inputs.resource_id }}"
+            aws rds stop-db-cluster --db-cluster-identifier "${{ inputs.resource_id }}"
+          fi
+
+      - name: Confirm status
+        run: |
+          echo "Action '${{ inputs.action }}' triggered for ${{ inputs.resource_type }}: ${{ inputs.resource_id }}"
+          echo "Check AWS Console for current status — RDS instances take 2-5 minutes to start."
